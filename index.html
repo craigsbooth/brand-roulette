@@ -89,6 +89,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            position: relative;
         }
 
         .wheel-select {
@@ -136,34 +137,43 @@
         }
 
         .result-box {
-            width: 380px;
-            min-height: 280px;
-            background: linear-gradient(180deg, rgba(20,20,40,0.95) 0%, rgba(5,5,20,0.98) 100%);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            min-height: 0;
+            background: linear-gradient(180deg, rgba(10,10,30,0.92) 0%, rgba(5,5,20,0.96) 100%);
             border: 3px solid #ffd700;
             border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 25px 20px;
-            backdrop-filter: blur(10px);
+            padding: 20px 15px;
+            backdrop-filter: blur(12px);
             transition: all 0.3s ease;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+            z-index: 15;
+            opacity: 0;
+            pointer-events: none;
         }
 
         .result-box.winner {
+            opacity: 1;
+            pointer-events: auto;
             border-color: #ffd700;
             box-shadow: 
                 0 0 30px rgba(255, 215, 0, 0.5),
                 0 0 60px rgba(255, 215, 0, 0.2),
-                inset 0 0 40px rgba(255, 215, 0, 0.08);
+                inset 0 0 30px rgba(255, 215, 0, 0.08);
             animation: slotWin 0.5s ease-out;
         }
 
         @keyframes slotWin {
-            0% { transform: scale(0.9); opacity: 0; }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: translateX(-50%) scale(0.85); opacity: 0; }
+            50% { transform: translateX(-50%) scale(1.02); }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
         }
 
         .result-box .brand-name {
@@ -186,14 +196,14 @@
         }
 
         .result-logo-wrap {
-            width: 280px;
-            height: 180px;
+            width: 220px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 16px;
+            padding: 16px;
             border: 4px solid #ffd700;
             box-shadow: 
                 0 10px 40px rgba(0,0,0,0.7),
@@ -303,9 +313,6 @@
                 width: 320px;
                 height: 320px;
             }
-            .result-box {
-                width: 310px;
-            }
         }
 
         @media (max-width: 850px) {
@@ -328,11 +335,11 @@
             height: 100%;
         }
         .wheels-container.count-1 .result-box {
-            width: 500px;
+            width: 70%;
         }
         .wheels-container.count-1 .result-logo-wrap {
-            width: 320px;
-            height: 200px;
+            width: 280px;
+            height: 180px;
         }
         .wheels-container.count-1 .brand-name {
             font-size: 2.2rem;
@@ -349,11 +356,11 @@
             height: 100%;
         }
         .wheels-container.count-2 .result-box {
-            width: 420px;
+            width: 80%;
         }
         .wheels-container.count-2 .result-logo-wrap {
-            width: 300px;
-            height: 190px;
+            width: 240px;
+            height: 150px;
         }
 
         .wheels-container.count-3 .wheel-container {
@@ -383,9 +390,9 @@
             <div class="wheel-container">
                 <div class="wheel-pointer"></div>
                 <canvas id="wheel1" width="400" height="400"></canvas>
-            </div>
-            <div class="result-box" id="result1">
-                <div class="brand-name">-</div>
+                <div class="result-box" id="result1">
+                    <div class="brand-name">-</div>
+                </div>
             </div>
         </div>
 
@@ -394,9 +401,9 @@
             <div class="wheel-container">
                 <div class="wheel-pointer"></div>
                 <canvas id="wheel2" width="400" height="400"></canvas>
-            </div>
-            <div class="result-box" id="result2">
-                <div class="brand-name">-</div>
+                <div class="result-box" id="result2">
+                    <div class="brand-name">-</div>
+                </div>
             </div>
         </div>
 
@@ -405,9 +412,9 @@
             <div class="wheel-container">
                 <div class="wheel-pointer"></div>
                 <canvas id="wheel3" width="400" height="400"></canvas>
-            </div>
-            <div class="result-box" id="result3">
-                <div class="brand-name">-</div>
+                <div class="result-box" id="result3">
+                    <div class="brand-name">-</div>
+                </div>
             </div>
         </div>
     </div>
