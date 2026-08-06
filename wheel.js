@@ -30,7 +30,7 @@ const INDUSTRIES = {
     "Food & Drink": ["Food", "Drinks", "Alcohol", "Coffee", "Grocery", "Dairy", "Frozen", "Biscuits", "Snacks", "Snacks US", "US Grocery", "US Food", "Condiments", "Breakfast", "Nutrition"],
     "Fashion & Luxury": ["Fashion", "Fragrance", "Watches", "Jewelry"],
     "Sports & Football": ["Sports", "Football", "US Sports", "F1", "Motorsport", "Fitness", "Sports Equipment"],
-    "Entertainment & Gaming": ["Entertainment", "Gaming", "TV", "Music", "Game Services"],
+    "Entertainment & Gaming": ["Entertainment", "Gaming", "TV", "Film", "Music", "Game Services"],
     "Chocolate & Sweets": ["Chocolate", "Confectionery"],
     "Retail & Shopping": ["Retail", "UK", "US", "Home", "DIY", "Outdoor"],
     "Finance & Banking": ["Finance", "Fintech", "Insurance"],
@@ -38,6 +38,7 @@ const INDUSTRIES = {
     "Health & Beauty": ["Health", "Beauty", "Household", "Baby", "Pets"],
     "Media & Apps": ["Media", "Apps", "Delivery", "Education"],
     "Energy & Fuel": ["Fuel", "Energy", "Aerospace", "Space", "Tools"],
+    "TV & Film": ["TV", "Film"],
 };
 
 class SpinWheel {
