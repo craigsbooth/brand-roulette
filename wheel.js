@@ -384,11 +384,16 @@ class SpinWheel {
     }
 
     resize() {
-        // Re-read canvas dimensions from CSS-applied size
-        const rect = this.canvas.getBoundingClientRect();
-        this.canvas.width = rect.width;
-        this.canvas.height = rect.height;
-        this.draw();
+        // Match canvas internal resolution to displayed size
+        setTimeout(() => {
+            const rect = this.canvas.getBoundingClientRect();
+            const size = Math.round(rect.width);
+            if (size > 0) {
+                this.canvas.width = size;
+                this.canvas.height = size;
+            }
+            this.draw();
+        }, 50);
     }
 }
 

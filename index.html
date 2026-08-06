@@ -318,12 +318,14 @@
 
         /* Dynamic wheel sizing based on count */
         .wheels-container.count-1 .wheel-container {
-            width: 550px;
-            height: 550px;
+            width: 75vmin;
+            height: 75vmin;
+            max-width: 650px;
+            max-height: 650px;
         }
         .wheels-container.count-1 .wheel-container canvas {
-            width: 550px;
-            height: 550px;
+            width: 100%;
+            height: 100%;
         }
         .wheels-container.count-1 .result-box {
             width: 500px;
@@ -333,16 +335,18 @@
             height: 200px;
         }
         .wheels-container.count-1 .brand-name {
-            font-size: 2rem;
+            font-size: 2.2rem;
         }
 
         .wheels-container.count-2 .wheel-container {
-            width: 450px;
-            height: 450px;
+            width: 44vmin;
+            height: 44vmin;
+            max-width: 500px;
+            max-height: 500px;
         }
         .wheels-container.count-2 .wheel-container canvas {
-            width: 450px;
-            height: 450px;
+            width: 100%;
+            height: 100%;
         }
         .wheels-container.count-2 .result-box {
             width: 420px;
@@ -350,6 +354,11 @@
         .wheels-container.count-2 .result-logo-wrap {
             width: 300px;
             height: 190px;
+        }
+
+        .wheels-container.count-3 .wheel-container {
+            width: 400px;
+            height: 400px;
         }
 
         .wheel-wrapper.hidden {
