@@ -330,9 +330,16 @@
         // Populate dropdowns then init wheels
         function populateSelects() {
             const selects = ['select1', 'select2', 'select3'];
+            const keys = Object.keys(INDUSTRIES);
+            // Sort alphabetically but keep "All Brands" at the top
+            keys.sort((a, b) => {
+                if (a === "All Brands") return -1;
+                if (b === "All Brands") return 1;
+                return a.localeCompare(b);
+            });
             selects.forEach(id => {
                 const sel = document.getElementById(id);
-                Object.keys(INDUSTRIES).forEach(name => {
+                keys.forEach(name => {
                     const opt = document.createElement('option');
                     opt.value = name;
                     opt.textContent = name;
