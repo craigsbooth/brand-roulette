@@ -346,10 +346,19 @@ class SpinWheel {
 
     showResult() {
         const domain = this.result.logo.split('domain=')[1];
-        // Best quality sources - hunter.io serves full HD logos free
-        const primary = `https://api.companyenrich.com/logo/${domain}`;
-        const secondary = `https://logos.hunter.io/${domain}`;
-        const tertiary = `https://www.google.com/s2/favicons?sz=256&domain=${domain}`;
+        
+        // If brand has a specific logoUrl, use that (guaranteed accurate)
+        // Otherwise fall through the CDN services
+        let primary, secondary, tertiary;
+        if (this.result.logoUrl) {
+            primary = this.result.logoUrl;
+            secondary = `https://cdn.brandfetch.io/logo/domain/${domain}?c=1ida3dcceja`;
+            tertiary = `https://www.google.com/s2/favicons?sz=256&domain=${domain}`;
+        } else {
+            primary = `https://cdn.brandfetch.io/logo/domain/${domain}?c=1ida3dcceja`;
+            secondary = `https://api.companyenrich.com/logo/${domain}`;
+            tertiary = `https://www.google.com/s2/favicons?sz=256&domain=${domain}`;
+        }
         const color = getBrandColor(this.result, this.winningIndex);
 
         this.resultBox.classList.add('winner');
