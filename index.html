@@ -113,8 +113,6 @@
 
         .wheel-container {
             position: relative;
-            width: 400px;
-            height: 400px;
         }
 
         .wheel-pointer {
@@ -233,7 +231,7 @@
 
         .spin-btn {
             position: absolute;
-            top: 50%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 20;
@@ -325,10 +323,10 @@
 
         /* Dynamic wheel sizing based on count */
         .wheels-container.count-1 .wheel-container {
-            width: 75vmin;
-            height: 75vmin;
-            max-width: 650px;
-            max-height: 650px;
+            width: 85vmin;
+            height: 85vmin;
+            max-width: 750px;
+            max-height: 750px;
         }
         .wheels-container.count-1 .wheel-container canvas {
             width: 100%;
@@ -346,10 +344,10 @@
         }
 
         .wheels-container.count-2 .wheel-container {
-            width: 44vmin;
-            height: 44vmin;
-            max-width: 500px;
-            max-height: 500px;
+            width: 50vmin;
+            height: 50vmin;
+            max-width: 550px;
+            max-height: 550px;
         }
         .wheels-container.count-2 .wheel-container canvas {
             width: 100%;
@@ -364,8 +362,16 @@
         }
 
         .wheels-container.count-3 .wheel-container {
-            width: 400px;
-            height: 400px;
+            width: 30vmin;
+            height: 30vmin;
+            max-width: 420px;
+            max-height: 420px;
+            min-width: 350px;
+            min-height: 350px;
+        }
+        .wheels-container.count-3 .wheel-container canvas {
+            width: 100%;
+            height: 100%;
         }
 
         .wheel-wrapper.hidden {
