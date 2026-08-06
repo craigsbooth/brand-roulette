@@ -271,18 +271,20 @@ class SpinWheel {
     }
 
     startSpin() {
-        const baseDuration = 3500;
-        const variance = Math.random() * 3500;
+        // Longer spin with more dramatic deceleration
+        const baseDuration = 5000;
+        const variance = Math.random() * 3000;
         this.spinDuration = baseDuration + variance;
 
-        const fullSpins = 10 + Math.floor(Math.random() * 8);
+        // More rotations for longer spin feel
+        const fullSpins = 12 + Math.floor(Math.random() * 10);
         const extraRotations = fullSpins * 2 * Math.PI;
         const randomOffset = Math.random() * 2 * Math.PI;
 
         this.startRotation = this.currentRotation;
         this.targetRotation = this.startRotation + extraRotations + randomOffset;
         this.spinStartTime = performance.now();
-        this.bounceAmount = 0.012 + Math.random() * 0.025;
+        this.bounceAmount = 0.008 + Math.random() * 0.015;
         this.animate();
     }
 
@@ -291,19 +293,31 @@ class SpinWheel {
         const elapsed = now - this.spinStartTime;
         const progress = Math.min(elapsed / this.spinDuration, 1);
 
+        // Realistic roulette wheel physics:
+        // Starts fast, gradually decelerates with a long tail, tiny settle at end
         let eased;
-        if (progress < 0.6) {
-            eased = progress / 0.6 * 0.8;
-        } else if (progress < 0.85) {
-            const sub = (progress - 0.6) / 0.25;
-            eased = 0.8 + sub * 0.14;
-        } else if (progress < 0.95) {
-            const sub = (progress - 0.85) / 0.10;
-            eased = 0.94 + sub * 0.04;
+        if (progress < 0.3) {
+            // Full speed phase - almost linear
+            eased = progress / 0.3 * 0.45;
+        } else if (progress < 0.6) {
+            // Beginning to slow - gentle deceleration
+            const sub = (progress - 0.3) / 0.3;
+            eased = 0.45 + sub * 0.30;
+        } else if (progress < 0.8) {
+            // Noticeably slowing down
+            const sub = (progress - 0.6) / 0.2;
+            const decel = 1 - Math.pow(1 - sub, 2);
+            eased = 0.75 + decel * 0.15;
+        } else if (progress < 0.93) {
+            // Very slow - the dramatic last moments
+            const sub = (progress - 0.8) / 0.13;
+            const decel = 1 - Math.pow(1 - sub, 3);
+            eased = 0.90 + decel * 0.07;
         } else {
-            const sub = (progress - 0.95) / 0.05;
-            const bounce = Math.sin(sub * Math.PI * 2) * this.bounceAmount * (1 - sub);
-            eased = 0.98 + sub * 0.02 + bounce;
+            // Final settle with micro-bounce (click into position)
+            const sub = (progress - 0.93) / 0.07;
+            const bounce = Math.sin(sub * Math.PI * 1.5) * this.bounceAmount * (1 - sub);
+            eased = 0.97 + sub * 0.03 + bounce;
         }
 
         this.currentRotation = this.startRotation + (this.targetRotation - this.startRotation) * eased;
