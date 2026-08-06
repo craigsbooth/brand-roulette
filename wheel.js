@@ -271,20 +271,19 @@ class SpinWheel {
     }
 
     startSpin() {
-        // Longer spin with more dramatic deceleration
-        const baseDuration = 5000;
-        const variance = Math.random() * 3000;
-        this.spinDuration = baseDuration + variance;
+        // Longer duration for more dramatic slowdown
+        this.spinDuration = 6000 + Math.random() * 3000; // 6-9 seconds
 
-        // More rotations for longer spin feel
-        const fullSpins = 12 + Math.floor(Math.random() * 10);
-        const extraRotations = fullSpins * 2 * Math.PI;
-        const randomOffset = Math.random() * 2 * Math.PI;
-
+        // High initial velocity (radians per second) that decays naturally
+        this.initialVelocity = 25 + Math.random() * 15; // 25-40 rad/s
+        
+        // Calculate total distance using v²/2a deceleration model
+        // This gives a natural friction-based slowdown
+        const totalDistance = this.initialVelocity * this.spinDuration / 2000;
+        
         this.startRotation = this.currentRotation;
-        this.targetRotation = this.startRotation + extraRotations + randomOffset;
+        this.targetRotation = this.startRotation + totalDistance;
         this.spinStartTime = performance.now();
-        this.bounceAmount = 0.008 + Math.random() * 0.015;
         this.animate();
     }
 
@@ -293,32 +292,10 @@ class SpinWheel {
         const elapsed = now - this.spinStartTime;
         const progress = Math.min(elapsed / this.spinDuration, 1);
 
-        // Realistic roulette wheel physics:
-        // Starts fast, gradually decelerates with a long tail, tiny settle at end
-        let eased;
-        if (progress < 0.3) {
-            // Full speed phase - almost linear
-            eased = progress / 0.3 * 0.45;
-        } else if (progress < 0.6) {
-            // Beginning to slow - gentle deceleration
-            const sub = (progress - 0.3) / 0.3;
-            eased = 0.45 + sub * 0.30;
-        } else if (progress < 0.8) {
-            // Noticeably slowing down
-            const sub = (progress - 0.6) / 0.2;
-            const decel = 1 - Math.pow(1 - sub, 2);
-            eased = 0.75 + decel * 0.15;
-        } else if (progress < 0.93) {
-            // Very slow - the dramatic last moments
-            const sub = (progress - 0.8) / 0.13;
-            const decel = 1 - Math.pow(1 - sub, 3);
-            eased = 0.90 + decel * 0.07;
-        } else {
-            // Final settle with micro-bounce (click into position)
-            const sub = (progress - 0.93) / 0.07;
-            const bounce = Math.sin(sub * Math.PI * 1.5) * this.bounceAmount * (1 - sub);
-            eased = 0.97 + sub * 0.03 + bounce;
-        }
+        // Real physics: constant deceleration (like friction)
+        // position = v0*t - 0.5*a*t²  which normalised gives: p = 2t - t²
+        // This means velocity decreases linearly to zero — exactly how a wheel behaves
+        const eased = progress * (2 - progress);
 
         this.currentRotation = this.startRotation + (this.targetRotation - this.startRotation) * eased;
         this.draw();
