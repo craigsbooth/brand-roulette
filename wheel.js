@@ -41,6 +41,114 @@ const INDUSTRIES = {
     "TV & Film": ["TV", "Film"],
 };
 
+// Known brand colours - the big recognisable ones
+const BRAND_COLOR_MAP = {
+    "Cadbury": "#4B0082", "Dairy Milk": "#4B0082", "Wispa": "#4B0082", "Twirl": "#4B0082",
+    "Flake": "#4B0082", "Roses": "#4B0082", "Heroes": "#4B0082", "Crunchie": "#4B0082",
+    "Double Decker": "#4B0082", "Boost": "#4B0082", "Freddo": "#4B0082", "Buttons": "#4B0082",
+    "Fudge": "#4B0082", "Curly Wurly": "#4B0082", "Picnic": "#4B0082", "Timeout": "#4B0082",
+    "Bournville": "#4B0082", "Starbar": "#4B0082", "Chomp": "#4B0082", "Caramel": "#4B0082",
+    "Fruit & Nut": "#4B0082", "Whole Nut": "#4B0082", "Twirl Bites": "#4B0082",
+    "Coca-Cola": "#E30613", "Fanta": "#FF6900", "Sprite": "#008B47",
+    "Pepsi": "#003DA5", "7UP": "#006B3F", "Mountain Dew": "#87CF3E",
+    "Red Bull": "#223971", "Monster Energy": "#95D600",
+    "Ferrari": "#C8102E", "Lamborghini": "#DAA520", "BMW": "#0066B1",
+    "Mercedes-Benz": "#333333", "Audi": "#BB0A30", "Porsche": "#C8102E",
+    "Toyota": "#EB0A1E", "Honda": "#CC0000", "Ford": "#003478",
+    "Tesla": "#CC0000", "Volkswagen": "#001E50", "Nissan": "#C3002F",
+    "Hyundai": "#002C5F", "Kia": "#05141F", "Volvo": "#003057",
+    "Jaguar": "#1E1E1E", "Land Rover": "#005A2B", "Rolls-Royce": "#1C1C1C",
+    "Apple": "#555555", "Microsoft": "#00A4EF", "Google": "#4285F4",
+    "Amazon": "#FF9900", "Samsung": "#1428A0", "Netflix": "#E50914",
+    "Spotify": "#1DB954", "Meta": "#0668E1", "TikTok": "#000000",
+    "YouTube": "#FF0000", "Instagram": "#E4405F", "WhatsApp": "#25D366",
+    "Twitter/X": "#000000", "LinkedIn": "#0077B5", "Reddit": "#FF4500",
+    "Snapchat": "#FFFC00", "Pinterest": "#BD081C", "Discord": "#5865F2",
+    "Nike": "#111111", "Adidas": "#000000", "Puma": "#000000",
+    "Gucci": "#000000", "Louis Vuitton": "#8B6914", "Burberry": "#A67B5B",
+    "Rolex": "#006039", "Versace": "#FFD700", "Prada": "#000000",
+    "McDonald's": "#FFC72C", "Burger King": "#FF8732", "KFC": "#E4002B",
+    "Subway": "#008C15", "Starbucks": "#006241", "Costa Coffee": "#6F1E43",
+    "Domino's": "#006491", "Pizza Hut": "#EE3A2D", "Nando's": "#C8102E",
+    "Greggs": "#004B93", "Taco Bell": "#702082",
+    "Tesco": "#00539F", "Sainsbury's": "#F06C00", "Asda": "#7AB648",
+    "Morrisons": "#FFD100", "Aldi": "#00457C", "Lidl": "#0050AA",
+    "IKEA": "#0058A3", "Walmart": "#0071CE", "Target": "#CC0000",
+    "Shell": "#FFD500", "BP": "#009900", "Esso": "#CC0000",
+    "Texaco": "#CC0000", "Total": "#FF3333", "ExxonMobil": "#D62631",
+    "Barclays": "#00AEEF", "HSBC": "#DB0011", "Lloyds": "#006B3F",
+    "NatWest": "#3F1882", "Santander": "#EC0000",
+    "Visa": "#1A1F71", "Mastercard": "#FF5F00", "American Express": "#006FCF",
+    "Monzo": "#FF5C57", "Revolut": "#0075EB", "Stripe": "#635BFF",
+    "PayPal": "#003087",
+    "British Airways": "#075AAA", "Ryanair": "#073590", "EasyJet": "#FF6600",
+    "Emirates": "#D71921", "Virgin Atlantic": "#E10A0A",
+    "Sky": "#0072C9", "BBC": "#000000", "ITV": "#0F8B8D",
+    "Channel 4": "#000000", "Netflix": "#E50914", "Disney+": "#113CCF",
+    "Vodafone": "#E60000", "EE": "#007B85", "O2": "#0019A5",
+    "Three": "#000000", "BT": "#6400AA",
+    "Cadbury": "#4B0082", "KitKat": "#CC0000", "Mars": "#911F12",
+    "Snickers": "#3C1E10", "M&M's": "#B5121B", "Maltesers": "#960018",
+    "Ferrero": "#8B6914", "Lindt": "#C5A258", "Toblerone": "#8B6914",
+    "Nutella": "#3C8C28", "Kinder": "#FF6600", "Haribo": "#FFC600",
+    "Skittles": "#E30613", "Mentos": "#009B3A",
+    "Heineken": "#00843D", "Guinness": "#000000", "Budweiser": "#CC0000",
+    "Corona": "#FDB913", "Jack Daniel's": "#000000", "Smirnoff": "#E21B22",
+    "Manchester United": "#DA291C", "Liverpool": "#C8102E", "Arsenal": "#EF0107",
+    "Chelsea": "#034694", "Manchester City": "#6CABDD", "Tottenham": "#132257",
+    "Barcelona": "#A50044", "Real Madrid": "#FEBE10", "Bayern Munich": "#DC052D",
+    "Juventus": "#000000", "PSG": "#004170",
+    "Premier League": "#3D195B", "Champions League": "#091442",
+    "FIFA": "#326295", "NBA": "#1D428A", "NFL": "#013369",
+    "Formula 1": "#E10600", "Red Bull Racing": "#1E41FF",
+    "Mercedes F1": "#00D2BE", "McLaren": "#FF8700",
+    "Nintendo": "#E60012", "PlayStation": "#003791", "Xbox": "#107C10",
+    "EA Sports": "#000000", "Roblox": "#E2231A",
+    "Disney": "#113CCF", "Warner Bros": "#004B87", "Pixar": "#000000",
+    "Marvel": "#EC1D24", "DC Comics": "#0078F0",
+    "Dyson": "#7D1979", "Bosch": "#005691",
+    "Heinz": "#1C5631", "Kellogg's": "#ED1C24",
+    "Dove": "#004B87", "Nivea": "#003478", "Gillette": "#0033A0",
+    "Colgate": "#E21836", "L'Oréal": "#000000",
+    "Pampers": "#006B3F", "Huggies": "#E31837",
+    "LEGO": "#D01012", "Hasbro": "#CF1F2E", "Mattel": "#FF0028",
+    "Pokémon": "#FFCB05",
+    "Hilton": "#003B5C", "Marriott": "#A50034", "Premier Inn": "#6B2C91",
+    "SpaceX": "#000000", "NASA": "#0B3D91", "Boeing": "#0033A0",
+};
+
+// Category-based fallback colours
+const CATEGORY_COLORS = {
+    "Cars": "#1C1C1C", "EV": "#00A550", "Motorbikes": "#333333", "Tyres": "#222222",
+    "Fuel": "#FFC107", "Energy": "#FF9800", "Technology": "#2196F3", "Tech": "#1565C0",
+    "Software": "#6A1B9A", "Cloud": "#0288D1", "Electronics": "#263238", "Crypto": "#F7931A",
+    "Food": "#D32F2F", "Drinks": "#C62828", "Alcohol": "#4E342E", "Coffee": "#5D4037",
+    "Grocery": "#388E3C", "Fashion": "#212121", "Fragrance": "#880E4F", "Watches": "#1A237E",
+    "Sports": "#1B5E20", "Football": "#2E7D32", "US Sports": "#0D47A1", "F1": "#E10600",
+    "Motorsport": "#BF360C", "Fitness": "#F57C00", "Entertainment": "#6A1B9A",
+    "Gaming": "#7B1FA2", "TV": "#1565C0", "Film": "#263238", "Music": "#AD1457",
+    "Chocolate": "#4E342E", "Confectionery": "#E65100", "Retail": "#00695C",
+    "UK": "#1A237E", "US": "#B71C1C", "Home": "#4E342E", "DIY": "#E65100",
+    "Outdoor": "#33691E", "Finance": "#1A237E", "Fintech": "#00838F",
+    "Insurance": "#004D40", "Airlines": "#01579B", "Travel": "#00838F",
+    "Hotels": "#4A148C", "Transport": "#37474F", "Health": "#1B5E20",
+    "Beauty": "#AD1457", "Household": "#00695C", "Baby": "#EC407A",
+    "Pets": "#8D6E63", "Media": "#37474F", "Apps": "#283593",
+    "Delivery": "#E65100", "Education": "#1565C0", "Aerospace": "#1A237E",
+    "Space": "#0D47A1", "Tools": "#BF360C", "Car Rental": "#00695C",
+};
+
+// Get colour for a brand
+function getBrandColor(brand, index) {
+    // Try exact name match first
+    if (BRAND_COLOR_MAP[brand.name]) return BRAND_COLOR_MAP[brand.name];
+    // Try category colour
+    if (CATEGORY_COLORS[brand.category]) return CATEGORY_COLORS[brand.category];
+    // Fallback to rotating colours
+    return COLORS[index % COLORS.length];
+}
+
+
 class SpinWheel {
     constructor(canvasId, resultId, delayMs, selectorId) {
         this.canvas = document.getElementById(canvasId);
@@ -92,12 +200,12 @@ class SpinWheel {
             const startAngle = this.currentRotation + i * segAngle;
             const endAngle = startAngle + segAngle;
 
-            // Segment fill
+            // Segment fill - use brand's actual colour
             ctx.beginPath();
             ctx.moveTo(cx, cy);
             ctx.arc(cx, cy, radius, startAngle, endAngle);
             ctx.closePath();
-            ctx.fillStyle = COLORS[i % COLORS.length];
+            ctx.fillStyle = getBrandColor(this.segments[i], i);
             ctx.fill();
 
             // White separator lines
@@ -251,7 +359,7 @@ class SpinWheel {
         const primary = `https://api.companyenrich.com/logo/${domain}`;
         const secondary = `https://logos.hunter.io/${domain}`;
         const tertiary = `https://www.google.com/s2/favicons?sz=256&domain=${domain}`;
-        const color = COLORS[this.winningIndex % COLORS.length];
+        const color = getBrandColor(this.result, this.winningIndex);
 
         this.resultBox.classList.add('winner');
         this.resultBox.style.borderColor = '#ffd700';
