@@ -38,6 +38,42 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
 
+        .wheel-count-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .wheel-count-label {
+            font-size: 0.8rem;
+            color: #aaa;
+            letter-spacing: 3px;
+            font-weight: 700;
+        }
+
+        .wheel-count-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #ffd700;
+            background: rgba(255,255,255,0.05);
+            color: #ffd700;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .wheel-count-btn:hover {
+            background: rgba(255,215,0,0.2);
+        }
+
+        .wheel-count-btn.active {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+
         .wheels-container {
             display: flex;
             gap: 30px;
@@ -279,13 +315,60 @@
             }
             h1 { font-size: 1.8rem; }
         }
+
+        /* Dynamic wheel sizing based on count */
+        .wheels-container.count-1 .wheel-container {
+            width: 550px;
+            height: 550px;
+        }
+        .wheels-container.count-1 .wheel-container canvas {
+            width: 550px;
+            height: 550px;
+        }
+        .wheels-container.count-1 .result-box {
+            width: 500px;
+        }
+        .wheels-container.count-1 .result-logo-wrap {
+            width: 320px;
+            height: 200px;
+        }
+        .wheels-container.count-1 .brand-name {
+            font-size: 2rem;
+        }
+
+        .wheels-container.count-2 .wheel-container {
+            width: 450px;
+            height: 450px;
+        }
+        .wheels-container.count-2 .wheel-container canvas {
+            width: 450px;
+            height: 450px;
+        }
+        .wheels-container.count-2 .result-box {
+            width: 420px;
+        }
+        .wheels-container.count-2 .result-logo-wrap {
+            width: 300px;
+            height: 190px;
+        }
+
+        .wheel-wrapper.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <h1>BRAND ROULETTE</h1>
 
+    <div class="wheel-count-bar">
+        <span class="wheel-count-label">WHEELS:</span>
+        <button class="wheel-count-btn active" data-count="1" onclick="setWheelCount(1)">1</button>
+        <button class="wheel-count-btn" data-count="2" onclick="setWheelCount(2)">2</button>
+        <button class="wheel-count-btn" data-count="3" onclick="setWheelCount(3)">3</button>
+    </div>
+
     <div class="wheels-container">
-        <button class="spin-btn" id="spinBtn" onclick="spinAll()">SPIN ALL!</button>
+        <button class="spin-btn" id="spinBtn" onclick="spinAll()">SPIN!</button>
         <div class="wheel-wrapper">
             <select class="wheel-select" id="select1"></select>
             <div class="wheel-container">
@@ -326,12 +409,12 @@
     <script src="wheel.js"></script>
     <script>
         const imageCache = {};
+        let activeWheelCount = 3;
 
         // Populate dropdowns then init wheels
         function populateSelects() {
             const selects = ['select1', 'select2', 'select3'];
             const keys = Object.keys(INDUSTRIES);
-            // Sort alphabetically but keep "All Brands" at the top
             keys.sort((a, b) => {
                 if (a === "All Brands") return -1;
                 if (b === "All Brands") return 1;
@@ -347,8 +430,31 @@
                 });
             });
         }
+
+        function setWheelCount(count) {
+            activeWheelCount = count;
+            // Update button states
+            document.querySelectorAll('.wheel-count-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.count) === count);
+            });
+            // Show/hide wheels
+            const wrappers = document.querySelectorAll('.wheel-wrapper');
+            wrappers.forEach((w, i) => {
+                w.classList.toggle('hidden', i >= count);
+            });
+            // Update container class for sizing
+            const container = document.querySelector('.wheels-container');
+            container.className = 'wheels-container count-' + count;
+
+            // Redraw visible wheels at new size
+            if (wheel1) { wheel1.resize(); }
+            if (wheel2 && count >= 2) { wheel2.resize(); }
+            if (wheel3 && count >= 3) { wheel3.resize(); }
+        }
+
         populateSelects();
         initWheels();
+        setWheelCount(3);
     </script>
 </body>
 </html>

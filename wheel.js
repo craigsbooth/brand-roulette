@@ -382,6 +382,14 @@ class SpinWheel {
         this.resultBox.style.boxShadow = '';
         this.resultBox.innerHTML = '<div class="brand-name">-</div>';
     }
+
+    resize() {
+        // Re-read canvas dimensions from CSS-applied size
+        const rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+        this.draw();
+    }
 }
 
 // Wheels will be initialized after selects are populated
@@ -403,19 +411,22 @@ function spinAll() {
     btn.textContent = 'SPINNING...';
 
     wheel1.reset();
-    wheel2.reset();
-    wheel3.reset();
+    if (activeWheelCount >= 2) wheel2.reset();
+    if (activeWheelCount >= 3) wheel3.reset();
 
     wheel1.spin();
-    wheel2.spin();
-    wheel3.spin();
+    if (activeWheelCount >= 2) wheel2.spin();
+    if (activeWheelCount >= 3) wheel3.spin();
 
     const checkDone = setInterval(() => {
-        if (!wheel1.spinning && !wheel2.spinning && !wheel3.spinning) {
+        const w1Done = !wheel1.spinning;
+        const w2Done = activeWheelCount < 2 || !wheel2.spinning;
+        const w3Done = activeWheelCount < 3 || !wheel3.spinning;
+        if (w1Done && w2Done && w3Done) {
             clearInterval(checkDone);
             spinning = false;
             btn.disabled = false;
-            btn.textContent = 'SPIN ALL!';
+            btn.textContent = 'SPIN!';
         }
     }, 100);
 }
