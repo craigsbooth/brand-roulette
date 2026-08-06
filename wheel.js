@@ -405,7 +405,9 @@ function spinAll() {
     const btn = document.getElementById('spinBtn');
     btn.disabled = true;
     btn.textContent = 'SPINNING...';
+    btn.classList.remove('results-showing');
 
+    // Clear previous results
     wheel1.reset();
     if (activeWheelCount >= 2) wheel2.reset();
     if (activeWheelCount >= 3) wheel3.reset();
@@ -423,6 +425,7 @@ function spinAll() {
             spinning = false;
             btn.disabled = false;
             btn.textContent = 'SPIN!';
+            btn.classList.add('results-showing');
         }
     }, 100);
 }

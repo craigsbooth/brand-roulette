@@ -231,10 +231,10 @@
 
         .spin-btn {
             position: absolute;
-            top: 40%;
+            top: 35%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 20;
+            z-index: 25;
             padding: 22px 60px;
             font-size: 1.6rem;
             font-weight: 900;
@@ -300,6 +300,11 @@
             pointer-events: none;
             transform: translate(-50%, -50%);
             animation: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .spin-btn.results-showing {
+            top: 20%;
         }
 
         @media (max-width: 1100px) {
@@ -362,12 +367,8 @@
         }
 
         .wheels-container.count-3 .wheel-container {
-            width: 30vmin;
-            height: 30vmin;
-            max-width: 420px;
-            max-height: 420px;
-            min-width: 350px;
-            min-height: 350px;
+            width: 420px;
+            height: 420px;
         }
         .wheels-container.count-3 .wheel-container canvas {
             width: 100%;
