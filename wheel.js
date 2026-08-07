@@ -24,21 +24,16 @@ const VISIBLE_SEGMENTS = 100;
 
 // Industry groupings for the category selector
 const INDUSTRIES = {
-    "All Brands": null, // null means pick from everything
-    "Cars & Automotive": ["Cars", "EV", "Motorbikes", "Tyres", "Car Rental", "Fuel"],
-    "Technology": ["Technology", "Tech", "Software", "Cloud", "Electronics", "Crypto"],
-    "Food & Drink": ["Food", "Drinks", "Alcohol", "Coffee", "Grocery", "Dairy", "Frozen", "Biscuits", "Snacks", "Snacks US", "US Grocery", "US Food", "Condiments", "Breakfast", "Nutrition"],
-    "Fashion & Luxury": ["Fashion", "Fragrance", "Watches", "Jewelry"],
-    "Sports & Football": ["Sports", "Football", "US Sports", "F1", "Motorsport", "Fitness", "Sports Equipment"],
-    "Entertainment & Gaming": ["Entertainment", "Gaming", "TV", "Film", "Music", "Game Services"],
-    "Chocolate & Sweets": ["Chocolate", "Confectionery"],
-    "Retail & Shopping": ["Retail", "UK", "US", "Home", "DIY", "Outdoor"],
-    "Finance & Banking": ["Finance", "Fintech", "Insurance"],
-    "Travel & Airlines": ["Airlines", "Travel", "Hotels", "Transport"],
-    "Health & Beauty": ["Health", "Beauty", "Household", "Baby", "Pets"],
-    "Media & Apps": ["Media", "Apps", "Delivery", "Education"],
-    "Energy & Fuel": ["Fuel", "Energy", "Aerospace", "Space", "Tools"],
-    "TV & Film": ["TV", "Film"],
+    "All Brands": null,
+    "Airlines": ["Airlines"],
+    "Finance & Banking": ["Finance"],
+    "Fashion": ["Fashion"],
+    "Gaming": ["Gaming"],
+    "Retail & Shopping": ["Retail"],
+    "Technology": ["Technology"],
+    "TV & Streaming": ["TV"],
+    "Film & Animation": ["Film"],
+    "Food & Drink": ["Alcohol"],
 };
 
 // Known brand colours - the big recognisable ones
@@ -345,20 +340,8 @@ class SpinWheel {
     }
 
     showResult() {
-        const domain = this.result.logo.split('domain=')[1];
-        
-        // If brand has a specific logoUrl, use that (guaranteed accurate)
-        // Otherwise fall through the CDN services
-        let primary, secondary, tertiary;
-        if (this.result.logoUrl) {
-            primary = this.result.logoUrl;
-            secondary = `https://cdn.brandfetch.io/logo/domain/${domain}?c=1ida3dcceja`;
-            tertiary = `https://www.google.com/s2/favicons?sz=256&domain=${domain}`;
-        } else {
-            primary = `https://cdn.brandfetch.io/logo/domain/${domain}?c=1ida3dcceja`;
-            secondary = `https://api.companyenrich.com/logo/${domain}`;
-            tertiary = `https://www.google.com/s2/favicons?sz=256&domain=${domain}`;
-        }
+        // Every brand has a verified Logopedia logo URL
+        const logoUrl = this.result.logoUrl;
         const color = getBrandColor(this.result, this.winningIndex);
 
         this.resultBox.classList.add('winner');
@@ -366,9 +349,9 @@ class SpinWheel {
         this.resultBox.style.boxShadow = `0 0 30px rgba(255,215,0,0.5), 0 0 60px ${color}40`;
         this.resultBox.innerHTML = `
             <div class="result-logo-wrap" style="border-color:${color}">
-                <img src="${primary}" alt="${this.result.name}" 
+                <img src="${logoUrl}" alt="${this.result.name}" 
                      class="result-logo"
-                     onerror="this.onerror=function(){this.onerror=null;this.src='${tertiary}';};this.src='${secondary}';"
+                     onerror="this.style.opacity='0.5';"
                      title="Right-click to copy or save image">
             </div>
             <div class="brand-name">${this.result.name}</div>
