@@ -266,11 +266,15 @@
             if (search) filtered = filtered.filter(b => b.name.toLowerCase().includes(search));
             if (catFilter) filtered = filtered.filter(b => b.category === catFilter);
 
-            grid.innerHTML = filtered.map((brand, i) => {
+            // Only render first 100 - load more on scroll (virtual scrolling lite)
+            const PAGE_SIZE = 100;
+            const toRender = filtered.slice(0, PAGE_SIZE);
+
+            grid.innerHTML = toRender.map((brand) => {
                 const isSelected = selectedBrands.has(brand.name);
                 return `
                     <div class="brand-card ${isSelected ? 'selected' : ''}" onclick="toggleBrand('${brand.name.replace(/'/g, "\\'")}')">
-                        <img class="logo-thumb" src="${brand.logoUrl}" alt="" onerror="this.style.opacity='0.3'">
+                        <img class="logo-thumb" src="${brand.logoUrl}" loading="lazy" alt="" onerror="this.style.display='none'">
                         <div class="brand-info">
                             <div class="name">${brand.name}</div>
                             <div class="cat">${brand.category}</div>
@@ -280,8 +284,59 @@
                 `;
             }).join('');
 
-            document.getElementById('totalShown').textContent = filtered.length + ' shown';
+            // Show load more button if there are more results
+            if (filtered.length > PAGE_SIZE) {
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="brand-card" style="justify-content:center;cursor:pointer;border-color:#ffd700;" onclick="loadMore()">
+                        <div class="brand-info"><div class="name" style="color:#ffd700;">Load ${Math.min(100, filtered.length - PAGE_SIZE)} more...</div></div>
+                    </div>
+                `);
+            }
+
+            document.getElementById('totalShown').textContent = filtered.length + ' found';
             document.getElementById('selectedCount').textContent = selectedBrands.size + ' selected';
+
+            // Store filtered for load more
+            window._filteredBrands = filtered;
+            window._renderedCount = PAGE_SIZE;
+        }
+
+        function loadMore() {
+            const filtered = window._filteredBrands || [];
+            const startIdx = window._renderedCount || 100;
+            const PAGE_SIZE = 100;
+            const nextBatch = filtered.slice(startIdx, startIdx + PAGE_SIZE);
+            const grid = document.getElementById('brandGrid');
+
+            // Remove the load more button
+            const loadBtn = grid.querySelector('.brand-card:last-child');
+            if (loadBtn && loadBtn.textContent.includes('more')) loadBtn.remove();
+
+            // Append next batch
+            nextBatch.forEach(brand => {
+                const isSelected = selectedBrands.has(brand.name);
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="brand-card ${isSelected ? 'selected' : ''}" onclick="toggleBrand('${brand.name.replace(/'/g, "\\'")}')">
+                        <img class="logo-thumb" src="${brand.logoUrl}" loading="lazy" alt="" onerror="this.style.display='none'">
+                        <div class="brand-info">
+                            <div class="name">${brand.name}</div>
+                            <div class="cat">${brand.category}</div>
+                        </div>
+                        <div class="check"></div>
+                    </div>
+                `);
+            });
+
+            window._renderedCount = startIdx + PAGE_SIZE;
+
+            // Add another load more button if needed
+            if (filtered.length > window._renderedCount) {
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="brand-card" style="justify-content:center;cursor:pointer;border-color:#ffd700;" onclick="loadMore()">
+                        <div class="brand-info"><div class="name" style="color:#ffd700;">Load ${Math.min(100, filtered.length - window._renderedCount)} more...</div></div>
+                    </div>
+                `);
+            }
         }
 
         function toggleBrand(name) {
