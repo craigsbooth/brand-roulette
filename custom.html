@@ -129,8 +129,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 12px;
-            max-height: 70vh;
-            overflow-y: auto;
             padding: 10px 5px;
         }
 
@@ -217,6 +215,55 @@
         .brand-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
         .brand-grid::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 4px; }
         .brand-grid::-webkit-scrollbar-thumb:hover { background: rgba(255,215,0,0.5); }
+
+        .alpha-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .alpha-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,215,0,0.3);
+            background: rgba(255,255,255,0.05);
+            color: #ccc;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alpha-btn:hover { background: rgba(255,215,0,0.15); color: #fff; }
+        .alpha-btn.active { background: #ffd700; color: #1a1a2e; border-color: #ffd700; }
+
+        .pagination {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,215,0,0.3);
+            background: rgba(255,255,255,0.05);
+            color: #ccc;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover { background: rgba(255,215,0,0.15); color: #fff; }
+        .page-btn.active { background: #ffd700; color: #1a1a2e; border-color: #ffd700; }
     </style>
 </head>
 <body>
@@ -232,18 +279,30 @@
         </select>
     </div>
 
+    <div class="alpha-bar" id="alphaBar"></div>
+
     <div class="stats-bar">
         <div class="stat" id="selectedCount">0 selected</div>
         <div class="stat" id="totalShown">0 shown</div>
         <button class="clear-btn" onclick="clearAll()">Clear Selection</button>
     </div>
 
+    <div class="pagination" id="pagination"></div>
     <div class="brand-grid" id="brandGrid"></div>
+    <div class="pagination" id="paginationBottom"></div>
 
     <script src="brands.js"></script>
     <script>
         const STORAGE_KEY = 'brandRoulette_customWheel';
+        const PAGE_SIZE = 50;
         let selectedBrands = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+        let currentLetter = 'A';
+        let currentPage = 1;
+        let currentSearch = '';
+        let currentCat = '';
+
+        // Sort brands alphabetically
+        ALL_BRANDS.sort((a, b) => a.name.localeCompare(b.name));
 
         // Get unique categories
         const categories = [...new Set(ALL_BRANDS.map(b => b.category))].sort();
@@ -257,23 +316,57 @@
             filterCat.appendChild(opt);
         });
 
-        function renderBrands() {
-            const search = document.getElementById('searchBox').value.toLowerCase();
-            const catFilter = document.getElementById('filterCat').value;
-            const grid = document.getElementById('brandGrid');
+        // Build alphabet bar
+        const alphaBar = document.getElementById('alphaBar');
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
+        letters.forEach(letter => {
+            const btn = document.createElement('button');
+            btn.className = 'alpha-btn' + (letter === 'A' ? ' active' : '');
+            btn.textContent = letter;
+            btn.onclick = () => {
+                currentLetter = letter;
+                currentPage = 1;
+                currentSearch = '';
+                document.getElementById('searchBox').value = '';
+                document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderBrands();
+            };
+            alphaBar.appendChild(btn);
+        });
 
+        function getFilteredBrands() {
             let filtered = ALL_BRANDS;
-            if (search) filtered = filtered.filter(b => b.name.toLowerCase().includes(search));
-            if (catFilter) filtered = filtered.filter(b => b.category === catFilter);
 
-            // Only render first 100 - load more on scroll (virtual scrolling lite)
-            const PAGE_SIZE = 100;
-            const toRender = filtered.slice(0, PAGE_SIZE);
+            if (currentSearch) {
+                filtered = filtered.filter(b => b.name.toLowerCase().includes(currentSearch));
+            } else if (currentLetter === '#') {
+                filtered = filtered.filter(b => !/^[A-Za-z]/.test(b.name));
+            } else {
+                filtered = filtered.filter(b => b.name.toUpperCase().startsWith(currentLetter));
+            }
 
-            grid.innerHTML = toRender.map((brand) => {
+            if (currentCat) {
+                filtered = filtered.filter(b => b.category === currentCat);
+            }
+
+            return filtered;
+        }
+
+        function renderBrands() {
+            const filtered = getFilteredBrands();
+            const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+            if (currentPage > totalPages) currentPage = 1;
+
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+            const grid = document.getElementById('brandGrid');
+            grid.innerHTML = pageItems.map(brand => {
                 const isSelected = selectedBrands.has(brand.name);
+                const safeName = brand.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 return `
-                    <div class="brand-card ${isSelected ? 'selected' : ''}" onclick="toggleBrand('${brand.name.replace(/'/g, "\\'")}')">
+                    <div class="brand-card ${isSelected ? 'selected' : ''}" onclick="toggleBrand('${safeName}')">
                         <img class="logo-thumb" src="${brand.logoUrl}" loading="lazy" alt="" onerror="this.style.display='none'">
                         <div class="brand-info">
                             <div class="name">${brand.name}</div>
@@ -284,59 +377,26 @@
                 `;
             }).join('');
 
-            // Show load more button if there are more results
-            if (filtered.length > PAGE_SIZE) {
-                grid.insertAdjacentHTML('beforeend', `
-                    <div class="brand-card" style="justify-content:center;cursor:pointer;border-color:#ffd700;" onclick="loadMore()">
-                        <div class="brand-info"><div class="name" style="color:#ffd700;">Load ${Math.min(100, filtered.length - PAGE_SIZE)} more...</div></div>
-                    </div>
-                `);
-            }
+            // Pagination
+            renderPagination(totalPages);
 
             document.getElementById('totalShown').textContent = filtered.length + ' found';
             document.getElementById('selectedCount').textContent = selectedBrands.size + ' selected';
-
-            // Store filtered for load more
-            window._filteredBrands = filtered;
-            window._renderedCount = PAGE_SIZE;
         }
 
-        function loadMore() {
-            const filtered = window._filteredBrands || [];
-            const startIdx = window._renderedCount || 100;
-            const PAGE_SIZE = 100;
-            const nextBatch = filtered.slice(startIdx, startIdx + PAGE_SIZE);
-            const grid = document.getElementById('brandGrid');
+        function renderPagination(totalPages) {
+            const html = Array.from({length: totalPages}, (_, i) => {
+                const p = i + 1;
+                return `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+            }).join('');
+            document.getElementById('pagination').innerHTML = html;
+            document.getElementById('paginationBottom').innerHTML = html;
+        }
 
-            // Remove the load more button
-            const loadBtn = grid.querySelector('.brand-card:last-child');
-            if (loadBtn && loadBtn.textContent.includes('more')) loadBtn.remove();
-
-            // Append next batch
-            nextBatch.forEach(brand => {
-                const isSelected = selectedBrands.has(brand.name);
-                grid.insertAdjacentHTML('beforeend', `
-                    <div class="brand-card ${isSelected ? 'selected' : ''}" onclick="toggleBrand('${brand.name.replace(/'/g, "\\'")}')">
-                        <img class="logo-thumb" src="${brand.logoUrl}" loading="lazy" alt="" onerror="this.style.display='none'">
-                        <div class="brand-info">
-                            <div class="name">${brand.name}</div>
-                            <div class="cat">${brand.category}</div>
-                        </div>
-                        <div class="check"></div>
-                    </div>
-                `);
-            });
-
-            window._renderedCount = startIdx + PAGE_SIZE;
-
-            // Add another load more button if needed
-            if (filtered.length > window._renderedCount) {
-                grid.insertAdjacentHTML('beforeend', `
-                    <div class="brand-card" style="justify-content:center;cursor:pointer;border-color:#ffd700;" onclick="loadMore()">
-                        <div class="brand-info"><div class="name" style="color:#ffd700;">Load ${Math.min(100, filtered.length - window._renderedCount)} more...</div></div>
-                    </div>
-                `);
-            }
+        function goToPage(p) {
+            currentPage = p;
+            renderBrands();
+            document.getElementById('brandGrid').scrollIntoView({behavior: 'smooth'});
         }
 
         function toggleBrand(name) {
@@ -346,7 +406,15 @@
                 selectedBrands.add(name);
             }
             save();
-            renderBrands();
+            // Just update the clicked card without re-rendering everything
+            const cards = document.querySelectorAll('.brand-card');
+            cards.forEach(card => {
+                const cardName = card.querySelector('.name')?.textContent;
+                if (cardName === name) {
+                    card.classList.toggle('selected');
+                }
+            });
+            document.getElementById('selectedCount').textContent = selectedBrands.size + ' selected';
         }
 
         function clearAll() {
@@ -360,10 +428,27 @@
         }
 
         // Event listeners
-        document.getElementById('searchBox').addEventListener('input', renderBrands);
-        document.getElementById('filterCat').addEventListener('change', renderBrands);
+        let searchTimeout;
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = e.target.value.toLowerCase();
+                currentPage = 1;
+                // Deactivate letter buttons when searching
+                if (currentSearch) {
+                    document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+                }
+                renderBrands();
+            }, 300);
+        });
 
-        // Initial render
+        document.getElementById('filterCat').addEventListener('change', (e) => {
+            currentCat = e.target.value;
+            currentPage = 1;
+            renderBrands();
+        });
+
+        // Initial render - start at letter A
         renderBrands();
     </script>
 </body>
