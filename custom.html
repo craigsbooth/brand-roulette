@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Roulette - Custom Wheel Builder</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #fff8dc 0%, #ffd700 40%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .back-btn {
+            padding: 10px 24px;
+            background: linear-gradient(180deg, #ff4d4d 0%, #c0392b 50%, #8b0000 100%);
+            border: 2px solid #ffd700;
+            border-radius: 30px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,215,0,0.5); }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 2px solid rgba(255,215,0,0.4);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus { border-color: #ffd700; }
+        .search-box::placeholder { color: #888; }
+
+        .filter-select {
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 2px solid rgba(255,215,0,0.4);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-select option { background: #1a1a2e; color: #fff; }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .stat {
+            padding: 8px 16px;
+            background: rgba(255,215,0,0.1);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .clear-btn {
+            padding: 8px 16px;
+            background: rgba(233,69,96,0.2);
+            border: 1px solid rgba(233,69,96,0.5);
+            border-radius: 20px;
+            color: #e94560;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-btn:hover { background: rgba(233,69,96,0.4); }
+
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 10px 5px;
+        }
+
+        .brand-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .brand-card:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,215,0,0.3);
+        }
+
+        .brand-card.selected {
+            background: rgba(255,215,0,0.1);
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255,215,0,0.2);
+        }
+
+        .brand-card .logo-thumb {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: #fff;
+            padding: 3px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .brand-card .brand-info {
+            overflow: hidden;
+        }
+
+        .brand-card .brand-info .name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .brand-card .brand-info .cat {
+            font-size: 0.65rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .brand-card .check {
+            margin-left: auto;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .brand-card.selected .check {
+            border-color: #ffd700;
+            background: #ffd700;
+        }
+
+        .brand-card.selected .check::after {
+            content: '✓';
+            color: #1a1a2e;
+            font-size: 0.7rem;
+            font-weight: 900;
+        }
+
+        /* Scrollbar */
+        .brand-grid::-webkit-scrollbar { width: 8px; }
+        .brand-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
+        .brand-grid::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 4px; }
+        .brand-grid::-webkit-scrollbar-thumb:hover { background: rgba(255,215,0,0.5); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CUSTOM WHEEL</h1>
+        <a href="index.html" class="back-btn">← Back to Spin</a>
+    </div>
+
+    <div class="controls">
+        <input type="text" class="search-box" id="searchBox" placeholder="Search brands...">
+        <select class="filter-select" id="filterCat">
+            <option value="">All Categories</option>
+        </select>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat" id="selectedCount">0 selected</div>
+        <div class="stat" id="totalShown">0 shown</div>
+        <button class="clear-btn" onclick="clearAll()">Clear Selection</button>
+    </div>
+
+    <div class="brand-grid" id="brandGrid"></div>
+
+    <script src="brands.js"></script>
+    <script>
+        const STORAGE_KEY = 'brandRoulette_customWheel';
+        let selectedBrands = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+        // Get unique categories
+        const categories = [...new Set(ALL_BRANDS.map(b => b.category))].sort();
+
+        // Populate category filter
+        const filterCat = document.getElementById('filterCat');
+        categories.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            filterCat.appendChild(opt);
+        });
+
+        function renderBrands() {
+            const search = document.getElementById('searchBox').value.toLowerCase();
+            const catFilter = document.getElementById('filterCat').value;
+            const grid = document.getElementById('brandGrid');
+
+            let filtered = ALL_BRANDS;
+            if (search) filtered = filtered.filter(b => b.name.toLowerCase().includes(search));
+            if (catFilter) filtered = filtered.filter(b => b.category === catFilter);
+
+            grid.innerHTML = filtered.map((brand, i) => {
+                const isSelected = selectedBrands.has(brand.name);
+                return `
+                    <div class="brand-card ${isSelected ? 'selected' : ''}" onclick="toggleBrand('${brand.name.replace(/'/g, "\\'")}')">
+                        <img class="logo-thumb" src="${brand.logoUrl}" alt="" onerror="this.style.opacity='0.3'">
+                        <div class="brand-info">
+                            <div class="name">${brand.name}</div>
+                            <div class="cat">${brand.category}</div>
+                        </div>
+                        <div class="check"></div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('totalShown').textContent = filtered.length + ' shown';
+            document.getElementById('selectedCount').textContent = selectedBrands.size + ' selected';
+        }
+
+        function toggleBrand(name) {
+            if (selectedBrands.has(name)) {
+                selectedBrands.delete(name);
+            } else {
+                selectedBrands.add(name);
+            }
+            save();
+            renderBrands();
+        }
+
+        function clearAll() {
+            selectedBrands.clear();
+            save();
+            renderBrands();
+        }
+
+        function save() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify([...selectedBrands]));
+        }
+
+        // Event listeners
+        document.getElementById('searchBox').addEventListener('input', renderBrands);
+        document.getElementById('filterCat').addEventListener('change', renderBrands);
+
+        // Initial render
+        renderBrands();
+    </script>
+</body>
+</html>

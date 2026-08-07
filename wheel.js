@@ -25,6 +25,7 @@ const VISIBLE_SEGMENTS = 100;
 // Industry groupings for the category selector
 const INDUSTRIES = {
     "All Brands": null,
+    "⭐ My Custom": "CUSTOM",
     "Airlines": ["Airlines"],
     "Cars": ["Cars"],
     "Chocolate & Sweets": ["Chocolate", "Snacks"],
@@ -175,6 +176,12 @@ class SpinWheel {
         const industry = this.selector ? this.selector.value : "All Brands";
         const cats = INDUSTRIES[industry];
         if (!cats) return ALL_BRANDS;
+        // Custom wheel - load from localStorage
+        if (cats === "CUSTOM") {
+            const saved = JSON.parse(localStorage.getItem('brandRoulette_customWheel') || '[]');
+            if (saved.length === 0) return ALL_BRANDS;
+            return ALL_BRANDS.filter(b => saved.includes(b.name));
+        }
         const filtered = ALL_BRANDS.filter(b => cats.includes(b.category));
         return filtered.length > 0 ? filtered : ALL_BRANDS;
     }

@@ -74,6 +74,24 @@
             color: #1a1a2e;
         }
 
+        .custom-link {
+            margin-left: 15px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            color: #ffd700;
+            border: 1px solid rgba(255,215,0,0.4);
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .custom-link:hover {
+            background: rgba(255,215,0,0.15);
+            border-color: #ffd700;
+        }
+
         .wheels-container {
             display: flex;
             gap: 30px;
@@ -388,6 +406,7 @@
         <button class="wheel-count-btn active" data-count="1" onclick="setWheelCount(1)">1</button>
         <button class="wheel-count-btn" data-count="2" onclick="setWheelCount(2)">2</button>
         <button class="wheel-count-btn" data-count="3" onclick="setWheelCount(3)">3</button>
+        <a href="custom.html" class="custom-link">✏️ Build Custom Wheel</a>
     </div>
 
     <div class="wheels-container">
