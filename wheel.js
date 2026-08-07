@@ -26,14 +26,17 @@ const VISIBLE_SEGMENTS = 100;
 const INDUSTRIES = {
     "All Brands": null,
     "Airlines": ["Airlines"],
-    "Finance & Banking": ["Finance"],
+    "Cars": ["Cars"],
+    "Chocolate & Sweets": ["Chocolate", "Snacks"],
     "Fashion": ["Fashion"],
+    "Film & Animation": ["Film"],
+    "Finance & Banking": ["Finance"],
+    "Food & Drink": ["Food", "Drinks"],
+    "Football": ["Football", "Sports"],
     "Gaming": ["Gaming"],
     "Retail & Shopping": ["Retail"],
     "Technology": ["Technology"],
     "TV & Streaming": ["TV"],
-    "Film & Animation": ["Film"],
-    "Food & Drink": ["Alcohol"],
 };
 
 // Known brand colours - the big recognisable ones
